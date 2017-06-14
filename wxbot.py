@@ -175,7 +175,7 @@ class WXBot:
             dic = json.loads(r.text)
             dic_list.append(dic)
 
-        if self.DEBUG:
+        if True:#self.DEBUG:
             with open(os.path.join(self.temp_pwd,'contacts.json'), 'w') as f:
                 f.write(json.dumps(dic_list))
 
@@ -221,7 +221,7 @@ class WXBot:
                     self.account_info['group_member'][member['UserName']] = \
                         {'type': 'group_member', 'info': member, 'group': group}
 
-        if self.DEBUG:
+        if True:#self.DEBUG:
             with open(os.path.join(self.temp_pwd,'contact_list.json'), 'w') as f:
                 f.write(json.dumps(self.contact_list))
             with open(os.path.join(self.temp_pwd,'special_list.json'), 'w') as f:
@@ -756,7 +756,13 @@ class WXBot:
                        'content': content,
                        'to_user_id': msg['ToUserName'],
                        'user': user}
-            self.handle_msg_all(message)
+            redata=self.handle_msg_all(message)
+            
+			with open(os.path.join(self.temp_pwd,'dialog.txt'), 'a+') as f:
+				f.write("\n<br>----------"+msg['RecommendInfo']['NickName']+":\n<br>Q:")
+				f.write(message['content']['data'].encode('utf-8'))
+				f.write("\n<br>A:")
+				f.write(redata)
 
     def schedule(self):
         """
@@ -1201,6 +1207,12 @@ class WXBot:
                 self.status = 'loginout'
                 return
             self.status_notify()
+
+            self.temp_pwd  =  os.path.join(os.getcwd(),'temp_'+str(hash(self.my_account['UserName'])))
+            print("new temp path:",self.temp_pwd)
+            if os.path.exists(self.temp_pwd) == False:
+                os.makedirs(self.temp_pwd)
+
             if self.get_contact():
                 print '[INFO] Get %d contacts' % len(self.contact_list)
                 print '[INFO] Start to process messages .'
@@ -1261,8 +1273,8 @@ class WXBot:
         LOGIN_TEMPLATE = 'https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?tip=%s&uuid=%s&_=%s'
         tip = 1
 
-        try_later_secs = 1
-        MAX_RETRY_TIMES = 10
+        try_later_secs = 4
+        MAX_RETRY_TIMES = 20
 
         code = UNKONWN
 
