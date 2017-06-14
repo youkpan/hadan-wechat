@@ -757,12 +757,12 @@ class WXBot:
                        'to_user_id': msg['ToUserName'],
                        'user': user}
             redata=self.handle_msg_all(message)
-            
-			with open(os.path.join(self.temp_pwd,'dialog.txt'), 'a+') as f:
-				f.write("\n<br>----------"+msg['RecommendInfo']['NickName']+":\n<br>Q:")
-				f.write(message['content']['data'].encode('utf-8'))
-				f.write("\n<br>A:")
-				f.write(redata)
+
+            with open(os.path.join(self.temp_pwd,'dialog.txt'), 'a+') as f:
+	            f.write("\n<br>----------"+msg['RecommendInfo']['NickName']+":\n<br>Q:")
+	            f.write(message['content']['data'].encode('utf-8'))
+	            f.write("\n<br>A:")
+	            f.write(redata)
 
     def schedule(self):
         """
@@ -1207,9 +1207,10 @@ class WXBot:
                 self.status = 'loginout'
                 return
             self.status_notify()
-
-            self.temp_pwd  =  os.path.join(os.getcwd(),'temp_'+str(hash(self.my_account['UserName'])))
-            print("new temp path:",self.temp_pwd)
+            #print(self.my_account)
+            #print(self.my_account['NickName'])
+            self.temp_pwd  =  os.path.join(os.getcwd(),'temp_'+str(hash(self.my_account['NickName'])))
+            #print("new temp path:",self.temp_pwd)
             if os.path.exists(self.temp_pwd) == False:
                 os.makedirs(self.temp_pwd)
 
