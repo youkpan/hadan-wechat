@@ -17,6 +17,7 @@ import random
 from traceback import format_exc
 from requests.exceptions import ConnectionError, ReadTimeout
 import HTMLParser
+import subprocess
 
 UNKONWN = 'unkonwn'
 SUCCESS = '200'
@@ -151,6 +152,18 @@ class WXBot:
         else:
             raise Exception('Unknown Type')
 
+    def write_file(self,filename,data):
+        fpath=os.path.join(self.temp_pwd,filename)
+        with open(fpath, 'w') as f:
+            f.write(json.dumps(data))
+
+        try:
+            subprocess.call('rm -f '+fpath+'.xz', shell=True)
+            subprocess.call('xz -z '+fpath, shell=True)
+        except Exception as e:
+            pass
+        
+
     def get_contact(self):
         """获取当前账户的所有相关账号(包括联系人、公众号、群聊、特殊账号)"""
         dic_list = []
@@ -176,8 +189,9 @@ class WXBot:
             dic_list.append(dic)
 
         if True:#self.DEBUG:
-            with open(os.path.join(self.temp_pwd,'contacts.json'), 'w') as f:
-                f.write(json.dumps(dic_list))
+            #with open(os.path.join(self.temp_pwd,'contacts.json'), 'w') as f:
+               # f.write(json.dumps(dic_list))
+            self.write_file('contacts.json',dic_list)
 
         self.member_list = []
         for dic in dic_list:
@@ -222,20 +236,29 @@ class WXBot:
                         {'type': 'group_member', 'info': member, 'group': group}
 
         if True:#self.DEBUG:
-            with open(os.path.join(self.temp_pwd,'contact_list.json'), 'w') as f:
-                f.write(json.dumps(self.contact_list))
-            with open(os.path.join(self.temp_pwd,'special_list.json'), 'w') as f:
-                f.write(json.dumps(self.special_list))
-            with open(os.path.join(self.temp_pwd,'group_list.json'), 'w') as f:
-                f.write(json.dumps(self.group_list))
-            with open(os.path.join(self.temp_pwd,'public_list.json'), 'w') as f:
-                f.write(json.dumps(self.public_list))
-            with open(os.path.join(self.temp_pwd,'member_list.json'), 'w') as f:
-                f.write(json.dumps(self.member_list))
-            with open(os.path.join(self.temp_pwd,'group_users.json'), 'w') as f:
-                f.write(json.dumps(self.group_members))
-            with open(os.path.join(self.temp_pwd,'account_info.json'), 'w') as f:
-                f.write(json.dumps(self.account_info))
+            self.write_file('my_account.json',self.my_account)
+            #with open(os.path.join(self.temp_pwd,'contact_list.json'), 'w') as f:
+            #    f.write(json.dumps(self.contact_list))
+            self.write_file('contact_list.json',self.contact_list)
+            #with open(os.path.join(self.temp_pwd,'special_list.json'), 'w') as f:
+            #    f.write(json.dumps(self.special_list))
+            self.write_file('special_list.json',self.special_list)
+            #with open(os.path.join(self.temp_pwd,'group_list.json'), 'w') as f:
+            #    f.write(json.dumps(self.group_list))
+            self.write_file('group_list.json',self.group_list)
+            #with open(os.path.join(self.temp_pwd,'public_list.json'), 'w') as f:
+            #    f.write(json.dumps(self.public_list))
+            self.write_file('public_list.json',self.public_list)
+            #with open(os.path.join(self.temp_pwd,'member_list.json'), 'w') as f:
+            #    f.write(json.dumps(self.member_list))
+            self.write_file('member_list.json',self.member_list)
+            #with open(os.path.join(self.temp_pwd,'group_users.json'), 'w') as f:
+            #    f.write(json.dumps(self.group_members))
+            self.write_file('group_users.json',self.group_members)
+            #with open(os.path.join(self.temp_pwd,'account_info.json'), 'w') as f:
+            #    f.write(json.dumps(self.account_info))
+            self.write_file('account_info.json',self.account_info)
+
         return True
 
 
